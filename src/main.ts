@@ -3,8 +3,6 @@ import { NestFactory } from '@nestjs/core';
 
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { patchNestJsSwagger } from 'nestjs-zod';
-
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const globalPrefix = 'api';
@@ -22,7 +20,6 @@ async function bootstrap() {
 
 function initSwagger(app: INestApplication) {
   if (process.env.NODE_ENV !== 'production') {
-    patchNestJsSwagger();
     const config = new DocumentBuilder()
         .setTitle('form-builder-api')
         .addServer('http://localhost:3000')

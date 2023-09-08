@@ -1,4 +1,5 @@
-import { Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { Component } from "./FormComponent";
 
 
 export enum PropertyType {
@@ -7,7 +8,7 @@ export enum PropertyType {
   NUMBER = 'number',
   ARRAY= 'array',
   OBJECT = 'object',
-  // DATE = 'date',
+  DATE = 'date',
 }
 
 export class ErrorMessage {
@@ -37,8 +38,6 @@ export class PropertySchema {
   const?: any;
   not?: any;
   enum?: string[];
-  fileType?: string[];
-  fileMaximum?: number;
   minDate?: string;
   maxDate?: string;
   minimum?: number;
@@ -47,20 +46,50 @@ export class PropertySchema {
   errorMessage?: ErrorMessage;
 }
 
+export enum FormType {
+  ADDRESS = 'address',
+  EMAIL = 'email',
+  PASSWORD = 'password',
+  DATE = 'date',
+}
+
+export class OptionType { value: string; label: string }
+export class Field  {
+  name: string;
+  label?: string;
+  component: Component;
+  type?: FormType;
+  placeholder?: string;
+  rows?: number;
+  options?: OptionType[];
+  multiple?: boolean;
+};
 
 @Schema({
   timestamps: true,
   versionKey: false,
-  _id: false,
-  id: true,
-  virtuals: true,
 })
 export class FormInput {
-  declare id: string;
+  declare _id: string;
+  @Prop({
+    type: Map,
+    of: Object,
+  })
   properties: Record<string, PropertySchema>;
+  @Prop()
   required: string[];
-  additionalProperties?: boolean;
+  @Prop({
+    type: [Map],
+  })
   fields?: Field[];
+}
+
+class Answers {
+  userEmail: string;
+  @Prop({
+    type: Map,
+  })
+  answers: Record<string, any>;
 }
 
 export const FormSchema = SchemaFactory.createForClass(FormInput);

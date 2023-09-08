@@ -1,8 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
 import { FormInput } from './form.entity';
-import { CreateFormDTO, UpdateFormDTO } from './form.dto';
 import mongoose, { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
+import { CreateFormDTO } from "./form.dto";
 
 @Injectable()
 export class FormService {
@@ -12,7 +12,7 @@ export class FormService {
   async all(): Promise<FormInput[]> {
     return this.formModel.find();
   }
-  async update(id: string, form: UpdateFormDTO): Promise<FormInput> {
+  async update(id: string, newForm: FormInput): Promise<FormInput> {
     const session = await mongoose.startSession();
     session.startTransaction();
 
@@ -20,19 +20,24 @@ export class FormService {
       const formToUpdate = await this.formModel.findById(id).session(session);
 
       if (!formToUpdate) {
-        throw new Error('Form not found');
+        throw new NotFoundException('Form not found');
       }
+      const required = formToUpdate.required;
+      const fields = formToUpdate.fields;
+      newForm.required.every((field) => {
+        if (!required.includes(field)) {
+          throw new ConflictException('Cannot remove required field');
+        }
+      });
+      formToUpdate.required = newForm.required;
 
-      // Update the fields
-      // formToUpdate.label = form.label;
-      // formToUpdate.type = form.type;
-      // formToUpdate.options = form.options;
-      // TODO : Logic here
+      formToUpdate.fields = newForm.fields;
+      formToUpdate.properties = newForm.properties;
 
       await formToUpdate.save();
 
       await session.commitTransaction();
-      session.endSession();
+      await session.endSession();
 
       return formToUpdate;
     } catch (error) {

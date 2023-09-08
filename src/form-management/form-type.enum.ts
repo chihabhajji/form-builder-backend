@@ -1,7 +1,6 @@
 // noinspection JSUnusedGlobalSymbols
 
 export enum FormType {
-  Checkbox = 'checkbox',
   Color = 'color',
   Date = 'date',
   DatetimeLocal = 'datetime-local',

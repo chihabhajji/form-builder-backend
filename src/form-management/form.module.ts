@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { FormController } from './form.controller';
 import { FormService } from './form.service';
 import { FormInput, FormSchema } from './form.entity';
-import { FormProfile } from './form.mapper';
 import { MongooseModule } from '@nestjs/mongoose';
 
 @Module({
@@ -15,7 +14,7 @@ import { MongooseModule } from '@nestjs/mongoose';
     ]),
   ],
   controllers: [FormController],
-  providers: [FormService, FormProfile],
+  providers: [FormService],
   exports: [FormService],
 })
 export class FormModule {}

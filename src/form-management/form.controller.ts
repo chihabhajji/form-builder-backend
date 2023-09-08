@@ -10,8 +10,9 @@ import {
   Put,
 } from '@nestjs/common';
 import { FormService } from './form.service';
-import { CreateFormDTO, PaginatedFormDto, UpdateFormDTO } from './form.dto';
-import { FormInput, PropertyType } from "./form.entity";
+import { FormInput, FormType, PropertyType } from './form.entity';
+import { Component } from './FormComponent';
+import { CreateFormDTO } from "./form.dto";
 
 @ApiTags('form-management')
 @Controller('form-management')
@@ -19,8 +20,7 @@ export class FormController {
   constructor(private readonly formService: FormService) {}
 
   @Get('/all')
-  async all(
-  ): Promise<FormInput[]> {
+  async all(): Promise<FormInput[]> {
     return this.formService.all();
   }
 
@@ -35,11 +35,7 @@ export class FormController {
   }
 
   @Put('/:id')
-  async update(
-    @Param('id') id: string,
-    @Body() form: UpdateFormDTO,
-    //     TODO: Automapper
-  ): Promise<FormInput> {
+  async update(@Param('id') id: string, @Body() form: FormInput): Promise<FormInput> {
     return this.formService.update(id, form);
   }
 
@@ -54,132 +50,127 @@ export class FormController {
   @Get('/test')
   test(): FormInput {
     return {
-      id: 'test',
-      fields:  [
+      _id: 'test',
+      fields: [
         {
-          name: "email",
-          label: "Email",
-          component: "text",
-          type: "email",
-          placeholder: "xxx@gmail.com"
+          name: 'email',
+          label: 'Email',
+          component: Component.text,
+          type: FormType.EMAIL,
+          placeholder: 'xxx@gmail.com',
         },
         {
-          name: "password",
-          label: "Password",
-          component: "text",
-          type: "password",
-          placeholder: "********"
+          name: 'password',
+          label: 'Password',
+          component: Component.text,
+          type: FormType.PASSWORD,
+          placeholder: '********',
         },
         {
-          name: "confirmPassword",
-          label: "Confirm Password",
-          component: "text",
-          type: "password",
-          placeholder: "********"
+          name: 'confirmPassword',
+          label: 'Confirm Password',
+          component: Component.text,
+          type: FormType.PASSWORD,
+          placeholder: '********',
         },
         {
-          name: "newPassword",
-          label: "New Password",
-          component: "text",
-          type: "password",
-          placeholder: "********"
+          name: 'newPassword',
+          label: 'New Password',
+          component: Component.text,
+          type: FormType.PASSWORD,
+          placeholder: '********',
         },
         {
-          name: "isDeveloper",
-          label: "Is Developer",
-          component: "checkbox"
-        },
-        {
-          name: "bio",
-          label: "Bio",
-          component: "textarea",
+          name: 'bio',
+          label: 'Bio',
+          component: Component.textarea,
           rows: 3,
         },
         {
-          name: "address",
-          label: "Address",
-          component: "text",
-          type: "address",
-          placeholder: "xxx city",
+          name: 'address',
+          label: 'Address',
+          component: Component.text,
+          type: FormType.ADDRESS,
+          placeholder: 'xxx city',
         },
         {
-          name: "gender",
-          label: "Gender",
-          component: "radioGroup",
+          name: 'gender',
+          label: 'Gender',
+          component: Component.radioGroup,
           options: [
             {
-              value: "FEMALE",
-              label: "Female"
+              value: 'FEMALE',
+              label: 'Female',
             },
             {
-              value: "MALE",
-              label: "Male"
+              value: 'MALE',
+              label: 'Male',
             },
             {
-              value: "OTHER",
-              label: "Other"
-            }
-          ]
-        },
-        {
-          name: "title",
-          label: "Title",
-          component: "select",
-          options: [
-            {
-              value: "Mr",
-              label: "Mr"
+              value: 'OTHER',
+              label: 'Other',
             },
-            {
-              value: "Mrs",
-              label: "Mrs"
-            },
-            {
-              value: "Miss",
-              label: "Miss"
-            },
-            {
-              value: "Dr",
-              label: "Dr"
-            }
-          ]
-        },
-        {
-          name: "mood",
-          label: "Mood",
-          component: "select",
-          options: [
-            {
-              value: "GREATE",
-              label: "😀"
-            },
-            {
-              value: "UPSET",
-              label: "😥"
-            },
-            {
-              value: "ANGRY",
-              label: "😡"
-            },
-            {
-              value: "INLOVE",
-              label: "🥰"
-            },
-            {
-              value: "SCARED",
-              label: "😱"
-            },
-            {
-              value: "COLD",
-              label: "🥶"
-            },
-            {
-              value: "SICK",
-              label: "🤢"
-            }
           ],
-          multiple: true
-        }
+        },
+        {
+          name: 'title',
+          label: 'Title',
+          component: Component.select,
+          options: [
+            {
+              value: 'Mr',
+              label: 'Mr',
+            },
+            {
+              value: 'Mrs',
+              label: 'Mrs',
+            },
+            {
+              value: 'Miss',
+              label: 'Miss',
+            },
+            {
+              value: 'Dr',
+              label: 'Dr',
+            },
+          ],
+        },
+        {
+          name: 'mood',
+          label: 'Mood',
+          component: Component.select,
+          options: [
+            {
+              value: 'GREATE',
+              label: '😀',
+            },
+            {
+              value: 'UPSET',
+              label: '😥',
+            },
+            {
+              value: 'ANGRY',
+              label: '😡',
+            },
+            {
+              value: 'INLOVE',
+              label: '🥰',
+            },
+            {
+              value: 'SCARED',
+              label: '😱',
+            },
+            {
+              value: 'COLD',
+              label: '🥶',
+            },
+            {
+              value: 'SICK',
+              label: '🤢',
+            },
+          ],
+          multiple: true,
+        },
       ],
       properties: {
         email: {
