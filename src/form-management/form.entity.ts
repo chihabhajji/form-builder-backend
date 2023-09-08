@@ -1,15 +1,5 @@
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { Component } from "./FormComponent";
-
-
-export enum PropertyType {
-  STRING = 'string',
-  BOOLEAN = 'boolean',
-  NUMBER = 'number',
-  ARRAY= 'array',
-  OBJECT = 'object',
-  DATE = 'date',
-}
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Component, FormType, PropertyType } from './form.enum';
 
 export class ErrorMessage {
   required?: string;
@@ -29,6 +19,7 @@ export class ErrorMessage {
   maximum?: string;
   minItems?: string;
 }
+
 export class PropertySchema {
   type: PropertyType;
   format?: string;
@@ -46,15 +37,12 @@ export class PropertySchema {
   errorMessage?: ErrorMessage;
 }
 
-export enum FormType {
-  ADDRESS = 'address',
-  EMAIL = 'email',
-  PASSWORD = 'password',
-  DATE = 'date',
+export class OptionType {
+  value: string;
+  label: string;
 }
 
-export class OptionType { value: string; label: string }
-export class Field  {
+export class Field {
   name: string;
   label?: string;
   component: Component;
@@ -63,7 +51,7 @@ export class Field  {
   rows?: number;
   options?: OptionType[];
   multiple?: boolean;
-};
+}
 
 @Schema({
   timestamps: true,
@@ -79,20 +67,13 @@ export class FormInput {
   @Prop()
   required: string[];
   @Prop({
-    type: [Map],
+    type: [Object],
   })
   fields?: Field[];
-}
-
-class Answers {
-  userEmail: string;
   @Prop({
-    type: Map,
+    type: [Map],
   })
-  answers: Record<string, any>;
+  answers?: Record<string, unknown>[];
 }
 
 export const FormSchema = SchemaFactory.createForClass(FormInput);
-
-
-

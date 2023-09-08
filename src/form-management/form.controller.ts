@@ -10,9 +10,9 @@ import {
   Put,
 } from '@nestjs/common';
 import { FormService } from './form.service';
-import { FormInput, FormType, PropertyType } from './form.entity';
-import { Component } from './FormComponent';
-import { CreateFormDTO } from "./form.dto";
+import { FormInput } from './form.entity';
+import { Component, FormType, PropertyType } from './form.enum';
+import { CreateFormDTO } from './form.dto';
 
 @ApiTags('form-management')
 @Controller('form-management')
@@ -35,7 +35,10 @@ export class FormController {
   }
 
   @Put('/:id')
-  async update(@Param('id') id: string, @Body() form: FormInput): Promise<FormInput> {
+  async update(
+    @Param('id') id: string,
+    @Body() form: FormInput,
+  ): Promise<FormInput> {
     return this.formService.update(id, form);
   }
 
@@ -45,6 +48,14 @@ export class FormController {
     if (!acknowledged) {
       throw new ConflictException(`Form with id ${id} not found`);
     }
+  }
+
+  @Put('/submit/:formId')
+  async submitFormAnswer(
+    @Param('formId') formId: string,
+    @Body() body: Record<string, string | []>,
+  ): Promise<FormInput> {
+    return this.formService.submitAnswer(formId, body);
   }
 
   @Get('/test')

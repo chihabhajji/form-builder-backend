@@ -4,6 +4,10 @@ import { FormInput, FormSchema } from "./src/form-management/form.entity";
 import { FormSeeder } from "./src/form-management/form.seeder";
 require('dotenv').config();
 
+
+// if i had more modules id do
+//   NestFactory.createApplicationContext(SeederModule)
+// inject the seeder and use it
 function seedModel(modelName: string, modelSchema: any, modelSeeder: any) {
   seeder({
     imports: [
