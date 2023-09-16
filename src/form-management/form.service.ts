@@ -27,7 +27,7 @@ export class FormService {
   private readonly logger = new ConsoleLogger(FormService.name);
   constructor(
     @InjectModel(FormInput.name) private formModel: Model<FormInput>,
-    private readonly eventEmitter: EventEmitter2,
+    public readonly eventEmitter: EventEmitter2,
   ) {}
   async all(): Promise<FormInput[]> {
     return this.formModel.find();
@@ -43,8 +43,8 @@ export class FormService {
         throw new NotFoundException('Form not found');
       }
       const required = formToUpdate.required;
-      newForm.required.every((field) => {
-        if (!required.includes(field)) {
+      required.every((field) => {
+        if (!newForm.required.includes(field)) {
           throw new ConflictException('Cannot remove required field');
         }
       });
@@ -52,16 +52,17 @@ export class FormService {
       formToUpdate.fields = newForm.fields;
       formToUpdate.properties = newForm.properties;
 
-      await formToUpdate.save();
+      await formToUpdate.save({
+        session
+      })
 
       await session.commitTransaction();
-
+      this.eventEmitter.emit(FORM_UPDATED, new FormUpdatedEvent(id));
       return formToUpdate;
     } catch (error) {
       await session.abortTransaction();
       throw error;
     } finally {
-      this.eventEmitter.emit(FORM_UPDATED, new FormUpdatedEvent(id));
       session.endSession().then(() => this.logger.debug('Session ended'));
     }
   }
